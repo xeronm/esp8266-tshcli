@@ -24,6 +24,7 @@
 from __future__ import print_function
 import argparse
 from collections import OrderedDict
+from operator import itemgetter
 import logging 
 import os
 import time
@@ -110,7 +111,7 @@ class Control:
 MESSAGE example:
   {
     "lsh.Statement-Name": "stmt_action01",
-    "lsh.Statement-Text": "# sdt := sysdate(); print(sdt - 10, sdt + 10)"
+    "lsh.Statement-Text": "## last_sdt; # sdt := sysdate(); print(last_sdt, sdt - last_sdt); (sdt % 2 = 0) ? print(0) : print(1); last_sdt := sdt;"
   }
 """
         msg = OrderedDict([ ('common.Service-Message-Type', lsh.Message.STMT_ADD) ])
@@ -384,13 +385,24 @@ Result Firmware:
         }, service.namespace_id )
 
     def cmd_system_info(self):
-        """query system information"""
+        """query system information (optional: -m)
+
+MESSAGE example:
+  {
+    "esp.System": {},
+    "esp.Firmware": {},
+    "esp.MemoryDB": {},
+    "esp.WIFI-Station": {},
+    "esp.WIFI-Soft-AP": {},
+  }
+"""
+        msg = OrderedDict([ ('common.Service-Message-Type', common.Message.INFO) ])
+        if self.args.message:
+            msg.update(self.args.message)
+        else:
+            msg.update({ "esp.System": {}, "esp.Firmware": {} })
         return self.uc.srvmsg( {
-            'esp:common.Service-Message': OrderedDict([
-                ('common.Service-Message-Type', common.Message.INFO),
-                ('esp.System', {}),
-                ('esp.Firmware', {}),
-            ])
+            'esp:common.Service-Message': msg
         }, espadmin.namespace_id )
 
     def cmd_ntp_info(self):
@@ -431,11 +443,11 @@ MESSAGE example:
   Value    - output value (0|1|0xFF), 0xFF - means disable output
   Pulse-us - switch output to negative Value after pulse microseconds
 """
-        msg = OrderedDict([ ('common.Service-Message-Type', gpio.Message.GPIO_SET) ])
+        msg = OrderedDict([ ('common.Service-Message-Type', gpioctl.Message.GPIO_SET) ])
         msg.update(self.args.message)
         return self.uc.srvmsg( {
             'gpio:common.Service-Message': msg
-        }, gpio.namespace_id )
+        }, gpioctl.namespace_id )
 
     def cmd_dht_info(self):
         """query DHT service information"""
@@ -489,7 +501,7 @@ MESSAGE example:
             print("command usage: %s [command ...]\n\ndescription:\n  %s\n\nsub-commands:" % (' '.join(path), root_help))
         else:
             print("commands:")
-        for (key, value) in items:
+        for (key, value) in sorted(items, key=itemgetter(0)) :
             print("  %-14s %s" % (key, value))
 
 def parseArgupments(first_pass=False):

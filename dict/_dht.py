@@ -9,6 +9,11 @@ class NS_DHT(dtlvmeta.namespace):
     _name = 'DHT'
     _namespace_id = namespace_id
 
+class SensorType(dtlvmeta.uint8):
+    _name = 'Sensor-Type'
+    _code = 100
+    _namespace = NS_DHT
+
 class StatTimeout(dtlvmeta.uint8):
     _name = 'Stat-Timeout'
     _code = 101
@@ -54,3 +59,7 @@ class StatAverage(dtlvmeta.objectAVP):
     _code = 109
     _namespace = NS_DHT
 
+class EMA_InitCount(dtlvmeta.uint8):
+    _name = 'EMA-Initialize-Counter'
+    _code = 110
+    _namespace = NS_DHT

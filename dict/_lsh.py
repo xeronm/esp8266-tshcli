@@ -51,3 +51,8 @@ class StatementArguments(dtlvmeta.objectAVP):
     _code = 106
     _namespace = NS_Lsh
 
+class FunctionName(dtlvmeta.char):
+    _name = 'Function-Name'
+    _code = 110
+    _namespace = NS_Lsh
+
