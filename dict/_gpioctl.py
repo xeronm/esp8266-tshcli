@@ -46,3 +46,8 @@ class PortPulseUs(dtlvmeta.uint16):
     _name = 'GPIO-Port-Pulse-us'
     _code = 108
     _namespace = NS_GPIO
+
+class PortPullup(dtlvmeta.uint16):
+    _name = 'GPIO-Port-Pullup'
+    _code = 109
+    _namespace = NS_GPIO

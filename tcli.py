@@ -392,9 +392,15 @@ MESSAGE example:
     "esp.System": {},
     "esp.Firmware": {},
     "esp.MemoryDB": {},
-    "esp.WIFI-Station": {},
-    "esp.WIFI-Soft-AP": {},
+    "esp.FlashDB": {},
+    "esp.Wireless": {},
   }
+
+  System   - system inforantion
+  Firmware - firmware inforantion
+  MemoryDB - in-memory DB information and statistics
+  FlashDB  - flash DB information and statistics
+  Wireless - wi-fi parameters and status
 """
         msg = OrderedDict([ ('common.Service-Message-Type', common.Message.INFO) ])
         if self.args.message:
@@ -436,12 +442,16 @@ MESSAGE example:
   {
     "common.Perepherial-GPIO-Id": "4",
     "gpio.GPIO-Port-Value": "1",
-    "gpio.GPIO-Port-Pulse-us": "100"
+    "gpio.GPIO-Port-Pulse-us": "100",
+    "gpio.GPIO-Function-Set": "0",
+    "gpio.GPIO-Port-Pullup": "1"
   }
 
   GPIO-Id  - GPIO pin identifier
   Value    - output value (0|1|0xFF), 0xFF - means disable output
-  Pulse-us - switch output to negative Value after pulse microseconds
+  Pulse-us - pulse microseconds (optional), switch output to negative Value after pulse microseconds
+  Function-Set - function (optional), select function for pin 
+  Pullup   - pullup state (0|1|optional), disable/enable pullup for pin
 """
         msg = OrderedDict([ ('common.Service-Message-Type', gpioctl.Message.GPIO_SET) ])
         msg.update(self.args.message)

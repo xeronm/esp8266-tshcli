@@ -78,7 +78,7 @@ class SystemBootLoaderVersion(dtlvmeta.uint8):
     _namespace = NS_EspAdmin
 
 class SystemHeapFree(dtlvmeta.uint32):
-    _name = 'System-CPU-Frequence'
+    _name = 'Heap-Free-Size'
     _code = 117
     _namespace = NS_EspAdmin
 
@@ -102,7 +102,7 @@ class FW_SizeMap(dtlvmeta.uint8):
     _code = 127
     _namespace = NS_EspAdmin
 
-class FW_BinSize(dtlvmeta.uint16):
+class FW_BinSize(dtlvmeta.uint32):
     _name = 'FW-Bin-Size'
     _code = 128
     _namespace = NS_EspAdmin
@@ -125,6 +125,16 @@ class FW_InitDigest(dtlvmeta.octets):
 class FW_Info(dtlvmeta.octets):
     _name = 'FW-Info'
     _code = 132
+    _namespace = NS_EspAdmin
+
+class FW_UserDataAddress(dtlvmeta.ptr24):
+    _name = 'FW-User-Data-Address'
+    _code = 133
+    _namespace = NS_EspAdmin
+
+class FW_UserDataSize(dtlvmeta.uint32):
+    _name = 'FW-User-Data-Size'
+    _code = 134
     _namespace = NS_EspAdmin
 
 class MDB_BlockSize(dtlvmeta.uint16):
