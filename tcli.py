@@ -34,6 +34,7 @@ from proto import *
 from dtlv import *
 import json
 import socket
+import dtlvmeta
 
 DESCRIPTION = "esp8266 Things Shell UDP control utility"
 
@@ -272,7 +273,8 @@ Running Firmware:
     Product: %s
     Version: %s
     Address: %s
-""" % ( service_msg['common.Application-Product'], service_msg['common.Application-Version'], fw_address))
+    BinDate: %s
+""" % ( service_msg['common.Application-Product'], service_msg['common.Application-Version'], fw_address, service_msg['esp.Firmware'].get('esp.FW-Bin-Date')))
 
         bundle_info = None
         with open(self.args.firmware, 'r') as f:
@@ -292,7 +294,8 @@ Running Firmware:
     Product: %s
     Version: %s
     Address: %s
-""" % (firmware_file, firmware_info['product'], firmware_info['version'], firmware_info['fw_addr']))
+    BinDate: %s
+""" % (firmware_file, firmware_info['product'], firmware_info['version'], firmware_info['fw_addr'], time.strftime(dtlvmeta.c_time_format, time.localtime(firmware_info['bin_date'])) ))
 
         res = self.uc.srvmsg( {
             'esp:common.Service-Message': OrderedDict([
@@ -364,7 +367,8 @@ Result Firmware:
     Product: %s
     Version: %s
     Address: %s
-""" % ( service_msg['common.Application-Product'], service_msg['common.Application-Version'], fw_address))
+    BinDate: %s
+""" % ( service_msg['common.Application-Product'], service_msg['common.Application-Version'], fw_address, service_msg['esp.Firmware'].get('esp.FW-Bin-Date')))
 
         return res
 
@@ -376,12 +380,51 @@ Result Firmware:
             }
         }, espadmin.namespace_id )
 
+    def cmd_system_truncfdb(self):
+        """truncate Flash-DB (will restart system)"""
+        return self.uc.srvmsg( {
+            'esp:common.Service-Message': {
+            'common.Service-Message-Type': espadmin.Message.FDB_TRUNC
+            }
+        }, espadmin.namespace_id )
+
     def cmd_service_info(self):
         """query services information"""
         return self.uc.srvmsg( {
             'service:common.Service-Message': {
                 'common.Service-Message-Type': common.Message.INFO
             }
+        }, service.namespace_id )
+
+    def cmd_service_control(self):
+        """services control operations (required: -m)
+
+MESSAGE example:
+  { "service.Service": [ 
+      {
+        "service.Service-Id": 8, 
+        "service.Service-Enabled": 1
+      } 
+    ] 
+  }"""
+        msg = OrderedDict([ ('common.Service-Message-Type', service.Message.CONTROL) ])
+        msg.update(self.args.message)
+        return self.uc.srvmsg( {
+            'service:common.Service-Message': msg
+        }, service.namespace_id )
+
+    def cmd_service_getconfig(self):
+        """services stored configuration get (required: -m)
+
+MESSAGE example:
+  { "service.Service": [ 
+      { "service.Service-Id": 8 } 
+    ] 
+  }"""
+        msg = OrderedDict([ ('common.Service-Message-Type', service.Message.CONFIG_GET) ])
+        msg.update(self.args.message)
+        return self.uc.srvmsg( {
+            'service:common.Service-Message': msg
         }, service.namespace_id )
 
     def cmd_system_info(self):
@@ -391,8 +434,8 @@ MESSAGE example:
   {
     "esp.System": {},
     "esp.Firmware": {},
-    "esp.MemoryDB": {},
-    "esp.FlashDB": {},
+    "esp.Memory-DB": {},
+    "esp.Flash-DB": {},
     "esp.Wireless": {},
   }
 

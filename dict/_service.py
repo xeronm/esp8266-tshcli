@@ -5,6 +5,11 @@ import dtlvmeta
 
 namespace_id = 1
 
+class Message:
+    CONTROL    = 2
+    CONFIG_GET = 3
+    CONFIG_SET = 4
+
 class NS_Service(dtlvmeta.namespace):
     _name = 'Service'
     _namespace_id = namespace_id

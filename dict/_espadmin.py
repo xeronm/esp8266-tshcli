@@ -11,6 +11,7 @@ class Message:
     RESTART       = 12
     FW_VERIFY     = 13
     FW_OTA_DONE   = 14
+    FDB_TRUNC     = 15
 
 class NS_EspAdmin(dtlvmeta.namespace):
     _name = 'ESP-Admin'
@@ -47,6 +48,11 @@ class WiFiSoftAP(dtlvmeta.objectAVP):
     _code = 107
     _namespace = NS_EspAdmin
 
+class FlashDB(dtlvmeta.objectAVP):
+    _name = 'Flash-DB'
+    _code = 108
+    _namespace = NS_EspAdmin
+
 class SystemSDKVersion(dtlvmeta.char):
     _name = 'System-SDK-Version'
     _code = 111
@@ -80,6 +86,26 @@ class SystemBootLoaderVersion(dtlvmeta.uint8):
 class SystemHeapFree(dtlvmeta.uint32):
     _name = 'Heap-Free-Size'
     _code = 117
+    _namespace = NS_EspAdmin
+
+class SystemException(dtlvmeta.objectAVP):
+    _name = 'System-Exception'
+    _code = 119
+    _namespace = NS_EspAdmin
+
+class SystemExceptionCause(dtlvmeta.uint32):
+    _name = 'System-Exception-Cause'
+    _code = 120
+    _namespace = NS_EspAdmin
+
+class SystemExceptionAddr(dtlvmeta.ptr24):
+    _name = 'System-Exception-Addr'
+    _code = 121
+    _namespace = NS_EspAdmin
+
+class SystemExceptionEPC(dtlvmeta.uint32):
+    _name = 'System-Exception-EPC'
+    _code = 122
     _namespace = NS_EspAdmin
 
 class SystemResetReason(dtlvmeta.uint8):
@@ -137,6 +163,11 @@ class FW_UserDataSize(dtlvmeta.uint32):
     _code = 134
     _namespace = NS_EspAdmin
 
+class FW_BinDate(dtlvmeta.date_time):
+    _name = 'FW-Bin-Date'
+    _code = 180
+    _namespace = NS_EspAdmin
+
 class MDB_BlockSize(dtlvmeta.uint16):
     _name = 'MDB-Block-Size'
     _code = 135
@@ -175,6 +206,36 @@ class MDB_FreeSlots(dtlvmeta.uint16):
 class MDB_FreeSize(dtlvmeta.uint16):
     _name = 'MDB-Free-Size'
     _code = 142
+    _namespace = NS_EspAdmin
+
+class MDB_MemUsed(dtlvmeta.uint32):
+    _name = 'MDB-Memory-Used'
+    _code = 143
+    _namespace = NS_EspAdmin
+
+class FDB_Info(dtlvmeta.objectAVP):
+    _name = 'FDB-Info'
+    _code = 190
+    _namespace = NS_EspAdmin
+
+class FDB_DataAddr(dtlvmeta.ptr24):
+    _name = 'FDB-Data-Address'
+    _code = 191
+    _namespace = NS_EspAdmin
+
+class FDB_DataSize(dtlvmeta.uint32):
+    _name = 'FDB-Data-Size'
+    _code = 192
+    _namespace = NS_EspAdmin
+
+class FDB_FileSize(dtlvmeta.uint32):
+    _name = 'FDB-File-Size'
+    _code = 193
+    _namespace = NS_EspAdmin
+
+class FDB_FileHWM(dtlvmeta.uint32):
+    _name = 'FDB-File-HWM'
+    _code = 194
     _namespace = NS_EspAdmin
 
 class WIFI_OpMode(dtlvmeta.uint8):

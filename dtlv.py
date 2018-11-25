@@ -106,11 +106,11 @@ class AVP:
 
         return value
 
-    def from_json_serializable(self, value):
+    def from_json_serializable(self, value, key=None):
         if isinstance(value, list) or isinstance(value, dict):
             self.value = None
-            self.avplist = AVPList(islist=isinstance(value, list))
-            self.avplist.from_json_serializable(value)
+            self.avplist = AVPList(islist=isinstance(value, list), context_ns_id=self.context_ns_id)
+            self.avplist.from_json_serializable(value, key or self.key)
         elif self.datatype == AVP.TYPE_OBJECT:
             raise Exception('Invalid value type for Object AVP')
         elif self.datatype == AVP.TYPE_OCTETS:
@@ -240,8 +240,8 @@ class AVPList:
                 logging.warning('from_json_serializable: AVP not found "%s"', key)
                 continue
 
-            avp = AVP(code=meta._code, namespace_id=namespace_id, datatype=meta._datatype, fixed_length=meta._fixed_length)
-            avp.from_json_serializable(value)
+            avp = AVP(code=meta._code, namespace_id=namespace_id, context_ns_id=self.context_ns_id, datatype=meta._datatype, fixed_length=meta._fixed_length)
+            avp.from_json_serializable(value, key)
             avps.append(avp)
         self.avps = avps
         return obj
