@@ -10,7 +10,9 @@ class Message:
     STMT_REMOVE = 11
     STMT_RUN = 12
     STMT_DUMP = 13
-
+    STMT_SOURCE = 14
+    STMT_LOAD = 15
+    STMT_LIST = 16
 
 class NS_Lsh(dtlvmeta.namespace):
     _name = 'Lsh'
@@ -51,8 +53,28 @@ class StatementArguments(dtlvmeta.objectAVP):
     _code = 106
     _namespace = NS_Lsh
 
+class StatementPersistent(dtlvmeta.uint8):
+    _name = 'Persistent-Flag'
+    _code = 107
+    _namespace = NS_Lsh
+
+class ShStatementSource(dtlvmeta.objectAVP):
+    _name = 'SH-Statement-Source'
+    _code = 108
+    _namespace = NS_Lsh
+
+
 class FunctionName(dtlvmeta.char):
     _name = 'Function-Name'
     _code = 110
     _namespace = NS_Lsh
 
+class ExitCode(dtlvmeta.uint8):
+    _name = 'Exit-Code'
+    _code = 111
+    _namespace = NS_Lsh
+
+class ExitAddr(dtlvmeta.ptr16):
+    _name = 'Exit-Address'
+    _code = 112
+    _namespace = NS_Lsh

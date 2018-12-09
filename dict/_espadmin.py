@@ -6,12 +6,13 @@ import dtlvmeta
 namespace_id = 3
 
 class Message:
-    FW_OTA_INIT   = 10
-    FW_OTA_UPLOAD = 11
-    RESTART       = 12
-    FW_VERIFY     = 13
+    RESTART       = 10
+    FDB_TRUNC     = 11
+    FW_OTA_INIT   = 12
+    FW_OTA_UPLOAD = 13
     FW_OTA_DONE   = 14
-    FDB_TRUNC     = 15
+    FW_OTA_ABORT  = 15
+    FW_VERIFY     = 16
 
 class NS_EspAdmin(dtlvmeta.namespace):
     _name = 'ESP-Admin'

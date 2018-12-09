@@ -42,6 +42,7 @@ class ExitCodes:
     AUTH_ERROR = 1
     COMMAND_ERROR = 2
     TIMEOUT = 3
+    APPL_ERROR = 4
     INVALID_USAGE = -1
 
 class Control:
@@ -82,6 +83,10 @@ class Control:
         """common system commands"""
         pass
 
+    def cmd_syslog(self):
+        """system logging commands"""
+        pass
+
     def cmd_dht(self):
         """DHTxx (humidity/temperature sensor) service commands"""
         pass
@@ -99,15 +104,23 @@ class Control:
         pass
 
     def cmd_lsh_info(self):
-        """query scheduler information"""
+        """query light-shell information"""
         return self.uc.srvmsg( {
             'lsh:common.Service-Message': {
                 'common.Service-Message-Type': common.Message.INFO
             }
         }, lsh.namespace_id )
 
+    def cmd_lsh_list(self):
+        """list light-shell stored sources"""
+        return self.uc.srvmsg( {
+            'lsh:common.Service-Message': {
+                'common.Service-Message-Type': lsh.Message.STMT_LIST
+            }
+        }, lsh.namespace_id )
+
     def cmd_lsh_add(self):
-        """add lsh named statement (required: -m)
+        """add light-shell named statement (required: -m)
 
 MESSAGE example:
   {
@@ -115,6 +128,9 @@ MESSAGE example:
     "lsh.Statement-Text": "## last_sdt; # sdt := sysdate(); print(last_sdt, sdt - last_sdt); (sdt % 2 = 0) ? print(0) : print(1); last_sdt := sdt;"
   }
 """
+        text = self.args.message.get("lsh.Statement-Text") 
+        if text:
+            self.args.message["lsh.Statement-Text"] = text.decode('string_escape')
         msg = OrderedDict([ ('common.Service-Message-Type', lsh.Message.STMT_ADD) ])
         msg.update(self.args.message)
         return self.uc.srvmsg( {
@@ -122,7 +138,7 @@ MESSAGE example:
         }, lsh.namespace_id )
 
     def cmd_lsh_remove(self):
-        """delete lsh statement (required: -m)
+        """delete light-shell statement (required: -m)
 
 MESSAGE example:
   { "lsh.Statement-Name": "stmt_action01" }
@@ -134,7 +150,7 @@ MESSAGE example:
         }, lsh.namespace_id )
 
     def cmd_lsh_run(self):
-        """run lsh statement (required: -m)
+        """run light-shell statement (required: -m)
 
 MESSAGE example:
   { "lsh.Statement-Name": "stmt_action01" }
@@ -146,7 +162,7 @@ MESSAGE example:
         }, lsh.namespace_id )
 
     def cmd_lsh_dump(self):
-        """dump bytecode for lsh statement (required: -m)
+        """dump bytecode for light-shell statement (required: -m)
 
 MESSAGE example:
   { "lsh.Statement-Name": "stmt_action01" }
@@ -164,12 +180,53 @@ MESSAGE example:
 
         return res
 
+    def cmd_lsh_source(self):
+        """get source for light-shell statement (required: -m)
+
+MESSAGE example:
+  { "lsh.Statement-Name": "stmt_action01" }
+"""
+        msg = OrderedDict([ ('common.Service-Message-Type', lsh.Message.STMT_SOURCE) ])
+        msg.update(self.args.message)
+        res = self.uc.srvmsg( {
+            'lsh:common.Service-Message': msg
+        }, lsh.namespace_id )
+
+        res_data = res.avplist.as_json_serializable()
+        service_msg = res_data.get('lsh:common.Service-Message')
+        if service_msg and service_msg.get('lsh.Statement-Text'):
+            print('<source>\n%s\n<EOF>\n\n' % service_msg['lsh.Statement-Text'])
+
+        return res
+
+    def cmd_lsh_load(self):
+        """load light-shell statement from source (required: -m)
+
+MESSAGE example:
+  { "lsh.Statement-Name": "stmt_action01" }
+"""
+        msg = OrderedDict([ ('common.Service-Message-Type', lsh.Message.STMT_LOAD) ])
+        msg.update(self.args.message)
+        res = self.uc.srvmsg( {
+            'lsh:common.Service-Message': msg
+        }, lsh.namespace_id )
+
+        return res
+
 
     def cmd_sched_info(self):
         """query scheduler information"""
         return self.uc.srvmsg( {
             'sched:common.Service-Message': {
                 'common.Service-Message-Type': common.Message.INFO
+            }
+        }, sched.namespace_id )
+
+    def cmd_sched_list(self):
+        """list scheduler stored sources"""
+        return self.uc.srvmsg( {
+            'sched:common.Service-Message': {
+                'common.Service-Message-Type': sched.Message.LIST
             }
         }, sched.namespace_id )
 
@@ -185,6 +242,7 @@ MESSAGE example:
   }
 
   Schedule-String format:
+     @0-31   - multicast signal_id (optional)
       0-3    - minute parts
       0-59   - minutes
       0-24   - hours
@@ -221,6 +279,18 @@ MESSAGE example:
             'sched:common.Service-Message': msg
         }, sched.namespace_id )
 
+    def cmd_sched_source(self):
+        """get source for scheduler entry (required: -m)
+
+MESSAGE example:
+  { "sched.Entry-Name": "myentry1" }
+"""
+        msg = OrderedDict([ ('common.Service-Message-Type', sched.Message.SOURCE) ])
+        msg.update(self.args.message)
+        return self.uc.srvmsg( {
+            'sched:common.Service-Message': msg
+        }, sched.namespace_id )
+
     def cmd_udpctl_info(self):
         """query udpctl information"""
         return self.uc.srvmsg( {
@@ -234,6 +304,14 @@ MESSAGE example:
         return self.uc.srvmsg( {
             'esp:common.Service-Message': {
                 'common.Service-Message-Type': espadmin.Message.FW_VERIFY
+            }
+        }, espadmin.namespace_id )
+
+    def cmd_firmware_upgabort(self):
+        """abort firmware upgrade"""
+        return self.uc.srvmsg( {
+            'esp:common.Service-Message': {
+                'common.Service-Message-Type': espadmin.Message.FW_OTA_ABORT
             }
         }, espadmin.namespace_id )
 
@@ -304,8 +382,13 @@ Running Firmware:
                 ('esp.FW-Info', firmware_info['fw_info']),
             ])
         }, espadmin.namespace_id )
-        if not self.check_response(res, 'Command Error: Initialize Firmware Upgrade'):
+        resdata = self.check_response(res, 'Command Error: Initialize Firmware Upgrade')
+        if not resdata:
             exit( ExitCodes.COMMAND_ERROR )
+        ext_code = resdata["esp:common.Service-Message"]["common.Result-Ext-Code"]
+        if ext_code != 0:
+            print('Upgrade initializing failed: %d' % ext_code)
+            exit( ExitCodes.APPL_ERROR )
 
         print('Upgrade initialized, uploading...')
 
@@ -325,8 +408,13 @@ Running Firmware:
                     ('esp.OTA-Bin-Data', binascii.hexlify(data_chunk)),
                 ])
             }, espadmin.namespace_id )
-            if not self.check_response(res, 'Command Error: Firmware upload'):
+            resdata = self.check_response(res, 'Command Error: Firmware upload')
+            if not resdata:
                 exit( ExitCodes.COMMAND_ERROR )
+            ext_code = resdata["esp:common.Service-Message"]["common.Result-Ext-Code"]
+            if ext_code != 0:
+                print('Upgrade uploading failed: %d' % ext_code)
+                exit( ExitCodes.APPL_ERROR )
 
             pos_pct = (i + len(data_chunk))*100/binlen
             print('\rUploading %d%% ...' % (pos_pct), end=' ')
@@ -338,8 +426,13 @@ Running Firmware:
                 ('common.Service-Message-Type', espadmin.Message.FW_OTA_DONE),
             ])
         }, espadmin.namespace_id )
-        if not self.check_response(res, 'Command Error: Firmware upgrade done'):
+        resdata = self.check_response(res, 'Command Error: Firmware upgrade done')
+        if not resdata:
             exit( ExitCodes.COMMAND_ERROR )
+        ext_code = resdata["esp:common.Service-Message"]["common.Result-Ext-Code"]
+        if ext_code != 0:
+            print('Upgrade done failed: %d' % ext_code)
+            exit( ExitCodes.APPL_ERROR )
 
         print('Upgrade Done. Waiting system up...')
         time.sleep(7)
@@ -413,15 +506,53 @@ MESSAGE example:
             'service:common.Service-Message': msg
         }, service.namespace_id )
 
-    def cmd_service_getconfig(self):
-        """services stored configuration get (required: -m)
+    def cmd_service_config(self):
+        """services configuration commands"""
+        pass
+
+    def cmd_service_config_get(self):
+        """get services stored configurations (required: -m)
 
 MESSAGE example:
   { "service.Service": [ 
-      { "service.Service-Id": 8 } 
+      { "service.Service-Id": 4 } 
     ] 
   }"""
         msg = OrderedDict([ ('common.Service-Message-Type', service.Message.CONFIG_GET) ])
+        msg.update(self.args.message)
+        return self.uc.srvmsg( {
+            'service:common.Service-Message': msg
+        }, service.namespace_id )
+
+    def cmd_service_config_set(self):
+        """set services new configuration (required: -m)
+
+MESSAGE example:
+  { "service.Service": [ 
+      { 
+        "service.Service-Id": 4,
+        "uctl:common.Service-Configuration": {
+            "common.IP-Port": 3900,
+            "uctl.Secret": "mysecret"
+        }
+      } 
+    ] 
+  }"""
+        msg = OrderedDict([ ('common.Service-Message-Type', service.Message.CONFIG_SET) ])
+        msg.update(self.args.message)
+        return self.uc.srvmsg( {
+            'service:common.Service-Message': msg
+        }, service.namespace_id )
+
+    def cmd_service_config_save(self):
+        """save services new configuration (required: -m)
+
+MESSAGE example:
+  { "service.Service": [ 
+      { "service.Service-Id": 4 } 
+    ] 
+  }"""
+        msg = OrderedDict([ ('common.Service-Message-Type', service.Message.CONFIG_SAVE) ])
         msg.update(self.args.message)
         return self.uc.srvmsg( {
             'service:common.Service-Message': msg
@@ -459,6 +590,14 @@ MESSAGE example:
         return self.uc.srvmsg( {
             'ntp:common.Service-Message': {
                 'common.Service-Message-Type': common.Message.INFO
+            }
+        }, ntp.namespace_id )
+
+    def cmd_ntp_setdate(self):
+        """force ntp query and set date"""
+        return self.uc.srvmsg( {
+            'ntp:common.Service-Message': {
+                'common.Service-Message-Type': ntp.Message.SETDATE
             }
         }, ntp.namespace_id )
 

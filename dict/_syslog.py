@@ -18,9 +18,16 @@ class LogEntry(dtlvmeta.objectAVP):
     _namespace = NS_Syslog
 
 class LogSeverity(dtlvmeta.uint8):
-    _name = 'Entry-Severity'
+    _name = 'Log-Severity'
     _code = 102
     _namespace = NS_Syslog
+
+    LOG_NONE = 0
+    LOG_CRITICAL = 1
+    LOG_ERROR = 2
+    LOG_WARNING = 3
+    LOG_INFO = 4
+    LOG_DEBUG = 5
 
 class LogMessage(dtlvmeta.char):
     _name = 'Entry-Message'

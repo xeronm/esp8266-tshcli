@@ -9,6 +9,7 @@ class Message:
     CONTROL    = 2
     CONFIG_GET = 3
     CONFIG_SET = 4
+    CONFIG_SAVE = 5
 
 class NS_Service(dtlvmeta.namespace):
     _name = 'Service'

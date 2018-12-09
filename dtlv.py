@@ -107,18 +107,26 @@ class AVP:
         return value
 
     def from_json_serializable(self, value, key=None):
+        svalue = None
+        self.value = None
         if isinstance(value, list) or isinstance(value, dict):
-            self.value = None
             self.avplist = AVPList(islist=isinstance(value, list), context_ns_id=self.context_ns_id)
             self.avplist.from_json_serializable(value, key or self.key)
         elif self.datatype == AVP.TYPE_OBJECT:
-            raise Exception('Invalid value type for Object AVP')
+            raise Exception('Invalid value type for Object AVP: %s' % self.key)
         elif self.datatype == AVP.TYPE_OCTETS:
-            self.value = binascii.unhexlify(value)
+            svalue = binascii.unhexlify(value)
             self.avplist = None
         else:
-            self.value = value
+            svalue = value
             self.avplist = None
+
+        meta = self.meta
+        if meta and svalue:
+             self.value = meta.from_json_serializable(svalue)
+        else:
+             self.value = svalue
+
 
     def encode(self):
         data = []

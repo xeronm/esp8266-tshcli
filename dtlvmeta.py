@@ -24,6 +24,7 @@
 import inspect
 import logging
 import time
+import re
 from utility import *
 
 c_time_format = '%Y.%m.%d %H:%M:%S'
@@ -51,6 +52,10 @@ class baseAVP:
 
     @classmethod
     def as_json_serializable(cls, value):
+        return value
+
+    @classmethod
+    def from_json_serializable(cls, value):
         return value
 
 class uint8(baseAVP):
@@ -99,6 +104,16 @@ class ptr24(uint32):
     def from_json_serializable(cls, value):
         return int(value, 16)
 
+class ptr16(uint16):
+
+    @classmethod
+    def as_json_serializable(cls, value):
+        return '0x%04x' % value
+
+    @classmethod
+    def from_json_serializable(cls, value):
+        return int(value, 16)
+
 class ipv4_address(octets):
     _fixed_length = 4  
 
@@ -129,7 +144,16 @@ class time_zone(uint8):
 
     @classmethod
     def from_json_serializable(cls, value):
-        return math.trunc(time.strptime(c_time_format, str(value)))
+        r = re.match(r'([+-])(\d{1,2}):(\d{2})', str(value))
+        if not r:
+            raise Exception("invalid value")
+
+        (sign, hh, mi) = r.groups()
+        res = int(hh)*4 + int(mi)/15
+
+        if sign == '-':
+            res = -res
+        return res
 
 class AVP_Index:
     _idx = {}

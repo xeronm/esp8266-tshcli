@@ -5,6 +5,9 @@ import dtlvmeta
 
 namespace_id = 6
 
+class Message:
+    SETDATE = 10
+
 class NS_NTP(dtlvmeta.namespace):
     _name = 'NTP'
     _namespace_id = namespace_id

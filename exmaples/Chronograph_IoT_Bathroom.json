@@ -1,0 +1,695 @@
+{
+	"meta": {
+		"chronografVersion": "1.6.0"
+	},
+	"dashboard": {
+		"id": 4,
+		"cells": [
+			{
+				"i": "9f4b6507-dc9f-4c0c-9887-43a73da99977",
+				"x": 4,
+				"y": 0,
+				"w": 2,
+				"h": 3,
+				"name": "FAN State",
+				"queries": [
+					{
+						"query": "SELECT abs(max(\"fan.Port-Value\")-1) AS \"max_fan.Port-Value\" FROM \"telegraf\".\"autogen\".\"exec_esp\" WHERE time > :dashboardTime: AND \"host\"='dm-srv1' GROUP BY time(:interval:) FILL(previous)",
+						"queryConfig": {
+							"database": "",
+							"measurement": "",
+							"retentionPolicy": "",
+							"fields": [],
+							"tags": {},
+							"groupBy": {
+								"time": "",
+								"tags": []
+							},
+							"areTagsAccepted": false,
+							"rawText": "SELECT abs(max(\"fan.Port-Value\")-1) AS \"max_fan.Port-Value\" FROM \"telegraf\".\"autogen\".\"exec_esp\" WHERE time > :dashboardTime: AND \"host\"='dm-srv1' GROUP BY time(:interval:) FILL(previous)",
+							"range": null,
+							"shifts": null
+						},
+						"source": "/chronograf/v1/sources/1"
+					}
+				],
+				"axes": {
+					"x": {
+						"bounds": [
+							"",
+							""
+						],
+						"label": "",
+						"prefix": "",
+						"suffix": "",
+						"base": "10",
+						"scale": "linear"
+					},
+					"y": {
+						"bounds": [
+							"",
+							""
+						],
+						"label": "",
+						"prefix": "",
+						"suffix": "",
+						"base": "10",
+						"scale": "linear"
+					},
+					"y2": {
+						"bounds": [
+							"",
+							""
+						],
+						"label": "",
+						"prefix": "",
+						"suffix": "",
+						"base": "10",
+						"scale": "linear"
+					}
+				},
+				"type": "single-stat",
+				"colors": [
+					{
+						"id": "base",
+						"type": "text",
+						"hex": "#00C9FF",
+						"name": "laser",
+						"value": "-1000000000000000000"
+					},
+					{
+						"id": "b379d1db-439f-4a7f-aa90-a290ec1e20dc",
+						"type": "text",
+						"hex": "#7A65F2",
+						"name": "star",
+						"value": "1"
+					}
+				],
+				"legend": {},
+				"tableOptions": {
+					"verticalTimeAxis": true,
+					"sortBy": {
+						"internalName": "time",
+						"displayName": "",
+						"visible": true
+					},
+					"wrapping": "truncate",
+					"fixFirstColumn": true
+				},
+				"fieldOptions": [
+					{
+						"internalName": "time",
+						"displayName": "",
+						"visible": true
+					}
+				],
+				"timeFormat": "MM/DD/YYYY HH:mm:ss",
+				"decimalPlaces": {
+					"isEnforced": true,
+					"digits": 2
+				},
+				"links": {
+					"self": "/chronograf/v1/dashboards/4/cells/9f4b6507-dc9f-4c0c-9887-43a73da99977"
+				}
+			},
+			{
+				"i": "50ae1f6b-f6c4-4bd3-8a4a-aea7a2160b23",
+				"x": 2,
+				"y": 0,
+				"w": 2,
+				"h": 3,
+				"name": "Temperature",
+				"queries": [
+					{
+						"query": "SELECT max(\"dht.Temperature.avg\")/100 AS \"max_dht.Temperature.avg\" FROM \"telegraf\".\"autogen\".\"exec_esp\" WHERE time > :dashboardTime: AND \"host\"='dm-srv1' GROUP BY time(:interval:) FILL(previous)",
+						"queryConfig": {
+							"database": "",
+							"measurement": "",
+							"retentionPolicy": "",
+							"fields": [],
+							"tags": {},
+							"groupBy": {
+								"time": "",
+								"tags": []
+							},
+							"areTagsAccepted": false,
+							"rawText": "SELECT max(\"dht.Temperature.avg\")/100 AS \"max_dht.Temperature.avg\" FROM \"telegraf\".\"autogen\".\"exec_esp\" WHERE time > :dashboardTime: AND \"host\"='dm-srv1' GROUP BY time(:interval:) FILL(previous)",
+							"range": null,
+							"shifts": null
+						},
+						"source": "/chronograf/v1/sources/1"
+					}
+				],
+				"axes": {
+					"x": {
+						"bounds": [
+							"",
+							""
+						],
+						"label": "",
+						"prefix": "",
+						"suffix": "",
+						"base": "10",
+						"scale": "linear"
+					},
+					"y": {
+						"bounds": [
+							"",
+							""
+						],
+						"label": "",
+						"prefix": "",
+						"suffix": "",
+						"base": "10",
+						"scale": "linear"
+					},
+					"y2": {
+						"bounds": [
+							"",
+							""
+						],
+						"label": "",
+						"prefix": "",
+						"suffix": "",
+						"base": "10",
+						"scale": "linear"
+					}
+				},
+				"type": "gauge",
+				"colors": [
+					{
+						"id": "0",
+						"type": "min",
+						"hex": "#00C9FF",
+						"name": "laser",
+						"value": "0"
+					},
+					{
+						"id": "1",
+						"type": "max",
+						"hex": "#9394FF",
+						"name": "comet",
+						"value": "50"
+					}
+				],
+				"legend": {},
+				"tableOptions": {
+					"verticalTimeAxis": true,
+					"sortBy": {
+						"internalName": "time",
+						"displayName": "",
+						"visible": true
+					},
+					"wrapping": "truncate",
+					"fixFirstColumn": true
+				},
+				"fieldOptions": [
+					{
+						"internalName": "time",
+						"displayName": "",
+						"visible": true
+					}
+				],
+				"timeFormat": "MM/DD/YYYY HH:mm:ss",
+				"decimalPlaces": {
+					"isEnforced": true,
+					"digits": 2
+				},
+				"links": {
+					"self": "/chronograf/v1/dashboards/4/cells/50ae1f6b-f6c4-4bd3-8a4a-aea7a2160b23"
+				}
+			},
+			{
+				"i": "9abaf218-9675-496e-a5b5-b8b61ed67788",
+				"x": 0,
+				"y": 0,
+				"w": 2,
+				"h": 3,
+				"name": "Humidity",
+				"queries": [
+					{
+						"query": "SELECT max(\"dht.Humidity.avg\")/100 AS \"max_dht.Humidity.avg\" FROM \"telegraf\".\"autogen\".\"exec_esp\" WHERE time > :dashboardTime: AND \"host\"='dm-srv1' GROUP BY time(:interval:) FILL(previous)",
+						"queryConfig": {
+							"database": "",
+							"measurement": "",
+							"retentionPolicy": "",
+							"fields": [],
+							"tags": {},
+							"groupBy": {
+								"time": "",
+								"tags": []
+							},
+							"areTagsAccepted": false,
+							"rawText": "SELECT max(\"dht.Humidity.avg\")/100 AS \"max_dht.Humidity.avg\" FROM \"telegraf\".\"autogen\".\"exec_esp\" WHERE time > :dashboardTime: AND \"host\"='dm-srv1' GROUP BY time(:interval:) FILL(previous)",
+							"range": null,
+							"shifts": null
+						},
+						"source": "/chronograf/v1/sources/1"
+					}
+				],
+				"axes": {
+					"x": {
+						"bounds": [
+							"",
+							""
+						],
+						"label": "",
+						"prefix": "",
+						"suffix": "",
+						"base": "10",
+						"scale": "linear"
+					},
+					"y": {
+						"bounds": [
+							"",
+							""
+						],
+						"label": "",
+						"prefix": "",
+						"suffix": "",
+						"base": "10",
+						"scale": "linear"
+					},
+					"y2": {
+						"bounds": [
+							"",
+							""
+						],
+						"label": "",
+						"prefix": "",
+						"suffix": "",
+						"base": "10",
+						"scale": "linear"
+					}
+				},
+				"type": "gauge",
+				"colors": [
+					{
+						"id": "0",
+						"type": "min",
+						"hex": "#00C9FF",
+						"name": "laser",
+						"value": "0"
+					},
+					{
+						"id": "1",
+						"type": "max",
+						"hex": "#9394FF",
+						"name": "comet",
+						"value": "100"
+					}
+				],
+				"legend": {},
+				"tableOptions": {
+					"verticalTimeAxis": true,
+					"sortBy": {
+						"internalName": "time",
+						"displayName": "",
+						"visible": true
+					},
+					"wrapping": "truncate",
+					"fixFirstColumn": true
+				},
+				"fieldOptions": [
+					{
+						"internalName": "time",
+						"displayName": "",
+						"visible": true
+					}
+				],
+				"timeFormat": "MM/DD/YYYY HH:mm:ss",
+				"decimalPlaces": {
+					"isEnforced": true,
+					"digits": 2
+				},
+				"links": {
+					"self": "/chronograf/v1/dashboards/4/cells/9abaf218-9675-496e-a5b5-b8b61ed67788"
+				}
+			},
+			{
+				"i": "1ab33e80-68db-4df9-9195-1523e8986b32",
+				"x": 0,
+				"y": 3,
+				"w": 6,
+				"h": 3,
+				"name": "FAN-Sate",
+				"queries": [
+					{
+						"query": "SELECT abs(mean(\"fan.Port-Value\")-1) AS \"mean_fan.Port-Value\" FROM \"telegraf\".\"autogen\".\"exec_esp\" WHERE time > :dashboardTime: AND \"common.Host-Name\"='ESP_FCA540' GROUP BY time(:interval:) FILL(null)",
+						"queryConfig": {
+							"database": "",
+							"measurement": "",
+							"retentionPolicy": "",
+							"fields": [],
+							"tags": {},
+							"groupBy": {
+								"time": "",
+								"tags": []
+							},
+							"areTagsAccepted": false,
+							"rawText": "SELECT abs(mean(\"fan.Port-Value\")-1) AS \"mean_fan.Port-Value\" FROM \"telegraf\".\"autogen\".\"exec_esp\" WHERE time > :dashboardTime: AND \"common.Host-Name\"='ESP_FCA540' GROUP BY time(:interval:) FILL(null)",
+							"range": null,
+							"shifts": null
+						},
+						"source": "/chronograf/v1/sources/1"
+					}
+				],
+				"axes": {
+					"x": {
+						"bounds": [
+							"",
+							""
+						],
+						"label": "",
+						"prefix": "",
+						"suffix": "",
+						"base": "10",
+						"scale": "linear"
+					},
+					"y": {
+						"bounds": [
+							"",
+							""
+						],
+						"label": "",
+						"prefix": "",
+						"suffix": "",
+						"base": "2",
+						"scale": "linear"
+					},
+					"y2": {
+						"bounds": [
+							"",
+							""
+						],
+						"label": "",
+						"prefix": "",
+						"suffix": "",
+						"base": "10",
+						"scale": "linear"
+					}
+				},
+				"type": "line",
+				"colors": [
+					{
+						"id": "a7bebb07-9835-4943-9008-d332a118fd1b",
+						"type": "scale",
+						"hex": "#31C0F6",
+						"name": "Nineteen Eighty Four",
+						"value": "0"
+					},
+					{
+						"id": "33a8387b-4e9c-4a69-bac5-7b75250187e3",
+						"type": "scale",
+						"hex": "#A500A5",
+						"name": "Nineteen Eighty Four",
+						"value": "0"
+					},
+					{
+						"id": "aae90973-1c76-45f4-a61e-c6b6259e97db",
+						"type": "scale",
+						"hex": "#FF7E27",
+						"name": "Nineteen Eighty Four",
+						"value": "0"
+					}
+				],
+				"legend": {
+					"type": "static",
+					"orientation": "bottom"
+				},
+				"tableOptions": {
+					"verticalTimeAxis": true,
+					"sortBy": {
+						"internalName": "time",
+						"displayName": "",
+						"visible": true
+					},
+					"wrapping": "truncate",
+					"fixFirstColumn": true
+				},
+				"fieldOptions": [
+					{
+						"internalName": "time",
+						"displayName": "",
+						"visible": true
+					},
+					{
+						"internalName": "exec_esp.mean_fan.Port-Value",
+						"displayName": "",
+						"visible": true
+					}
+				],
+				"timeFormat": "MM/DD/YYYY HH:mm:ss",
+				"decimalPlaces": {
+					"isEnforced": true,
+					"digits": 2
+				},
+				"links": {
+					"self": "/chronograf/v1/dashboards/4/cells/1ab33e80-68db-4df9-9195-1523e8986b32"
+				}
+			},
+			{
+				"i": "d4376620-8629-45ca-8815-fdbf559ce384",
+				"x": 6,
+				"y": 3,
+				"w": 6,
+				"h": 3,
+				"name": "Temperature",
+				"queries": [
+					{
+						"query": "SELECT mean(\"dht.Temperature.avg\")/100 AS \"mean_dht.Temperature.avg\", mean(\"dht.Temperature.last\")/100 AS \"mean_dht.Temperature.last\" FROM \"telegraf\".\"autogen\".\"exec_esp\" WHERE time > :dashboardTime: AND \"common.Host-Name\"='ESP_FCA540' GROUP BY time(:interval:) FILL(null)",
+						"queryConfig": {
+							"database": "",
+							"measurement": "",
+							"retentionPolicy": "",
+							"fields": [],
+							"tags": {},
+							"groupBy": {
+								"time": "",
+								"tags": []
+							},
+							"areTagsAccepted": false,
+							"rawText": "SELECT mean(\"dht.Temperature.avg\")/100 AS \"mean_dht.Temperature.avg\", mean(\"dht.Temperature.last\")/100 AS \"mean_dht.Temperature.last\" FROM \"telegraf\".\"autogen\".\"exec_esp\" WHERE time > :dashboardTime: AND \"common.Host-Name\"='ESP_FCA540' GROUP BY time(:interval:) FILL(null)",
+							"range": null,
+							"shifts": null
+						},
+						"source": "/chronograf/v1/sources/1"
+					}
+				],
+				"axes": {
+					"x": {
+						"bounds": [
+							"",
+							""
+						],
+						"label": "",
+						"prefix": "",
+						"suffix": "",
+						"base": "10",
+						"scale": "linear"
+					},
+					"y": {
+						"bounds": [
+							"",
+							""
+						],
+						"label": "",
+						"prefix": "",
+						"suffix": "",
+						"base": "2",
+						"scale": "linear"
+					},
+					"y2": {
+						"bounds": [
+							"",
+							""
+						],
+						"label": "",
+						"prefix": "",
+						"suffix": "",
+						"base": "10",
+						"scale": "linear"
+					}
+				},
+				"type": "line",
+				"colors": [
+					{
+						"id": "be0c786a-1bb4-45b5-b3f4-7f0fa59d54b7",
+						"type": "scale",
+						"hex": "#74D495",
+						"name": "Atlantis",
+						"value": "0"
+					},
+					{
+						"id": "397496c6-d775-47e2-a091-043afa31cf87",
+						"type": "scale",
+						"hex": "#3F3FBA",
+						"name": "Atlantis",
+						"value": "0"
+					},
+					{
+						"id": "4ba03aeb-a9e5-4bec-8140-dcc24e7c5316",
+						"type": "scale",
+						"hex": "#FF4D9E",
+						"name": "Atlantis",
+						"value": "0"
+					}
+				],
+				"legend": {
+					"type": "static",
+					"orientation": "bottom"
+				},
+				"tableOptions": {
+					"verticalTimeAxis": true,
+					"sortBy": {
+						"internalName": "time",
+						"displayName": "",
+						"visible": true
+					},
+					"wrapping": "truncate",
+					"fixFirstColumn": true
+				},
+				"fieldOptions": [
+					{
+						"internalName": "time",
+						"displayName": "",
+						"visible": true
+					}
+				],
+				"timeFormat": "MM/DD/YYYY HH:mm:ss",
+				"decimalPlaces": {
+					"isEnforced": true,
+					"digits": 2
+				},
+				"links": {
+					"self": "/chronograf/v1/dashboards/4/cells/d4376620-8629-45ca-8815-fdbf559ce384"
+				}
+			},
+			{
+				"i": "f76f97e0-7b14-4275-b4a6-f322f96b04b6",
+				"x": 6,
+				"y": 0,
+				"w": 6,
+				"h": 3,
+				"name": "Humidity",
+				"queries": [
+					{
+						"query": "SELECT mean(\"dht.Humidity.avg\")/100 AS \"mean_dht.Humidity.avg\", mean(\"dht.Humidity.last\")/100 AS \"mean_dht.Humidity.last\" FROM \"telegraf\".\"autogen\".\"exec_esp\" WHERE time > :dashboardTime: AND \"common.Host-Name\"='ESP_FCA540' GROUP BY time(:interval:) FILL(none)",
+						"queryConfig": {
+							"database": "",
+							"measurement": "",
+							"retentionPolicy": "",
+							"fields": [],
+							"tags": {},
+							"groupBy": {
+								"time": "",
+								"tags": []
+							},
+							"areTagsAccepted": false,
+							"rawText": "SELECT mean(\"dht.Humidity.avg\")/100 AS \"mean_dht.Humidity.avg\", mean(\"dht.Humidity.last\")/100 AS \"mean_dht.Humidity.last\" FROM \"telegraf\".\"autogen\".\"exec_esp\" WHERE time > :dashboardTime: AND \"common.Host-Name\"='ESP_FCA540' GROUP BY time(:interval:) FILL(none)",
+							"range": null,
+							"shifts": null
+						},
+						"source": "/chronograf/v1/sources/1"
+					}
+				],
+				"axes": {
+					"x": {
+						"bounds": [
+							"",
+							""
+						],
+						"label": "",
+						"prefix": "",
+						"suffix": "",
+						"base": "10",
+						"scale": "linear"
+					},
+					"y": {
+						"bounds": [
+							"",
+							""
+						],
+						"label": "",
+						"prefix": "",
+						"suffix": "",
+						"base": "2",
+						"scale": "linear"
+					},
+					"y2": {
+						"bounds": [
+							"",
+							""
+						],
+						"label": "",
+						"prefix": "",
+						"suffix": "",
+						"base": "10",
+						"scale": "linear"
+					}
+				},
+				"type": "line",
+				"colors": [
+					{
+						"id": "a7bebb07-9835-4943-9008-d332a118fd1b",
+						"type": "scale",
+						"hex": "#31C0F6",
+						"name": "Nineteen Eighty Four",
+						"value": "0"
+					},
+					{
+						"id": "33a8387b-4e9c-4a69-bac5-7b75250187e3",
+						"type": "scale",
+						"hex": "#A500A5",
+						"name": "Nineteen Eighty Four",
+						"value": "0"
+					},
+					{
+						"id": "aae90973-1c76-45f4-a61e-c6b6259e97db",
+						"type": "scale",
+						"hex": "#FF7E27",
+						"name": "Nineteen Eighty Four",
+						"value": "0"
+					}
+				],
+				"legend": {
+					"type": "static",
+					"orientation": "bottom"
+				},
+				"tableOptions": {
+					"verticalTimeAxis": true,
+					"sortBy": {
+						"internalName": "time",
+						"displayName": "",
+						"visible": true
+					},
+					"wrapping": "truncate",
+					"fixFirstColumn": true
+				},
+				"fieldOptions": [
+					{
+						"internalName": "time",
+						"displayName": "",
+						"visible": true
+					}
+				],
+				"timeFormat": "MM/DD/YYYY HH:mm:ss",
+				"decimalPlaces": {
+					"isEnforced": true,
+					"digits": 2
+				},
+				"links": {
+					"self": "/chronograf/v1/dashboards/4/cells/f76f97e0-7b14-4275-b4a6-f322f96b04b6"
+				}
+			}
+		],
+		"templates": [],
+		"name": "IoT Bathroom",
+		"organization": "default",
+		"links": {
+			"self": "/chronograf/v1/dashboards/4",
+			"cells": "/chronograf/v1/dashboards/4/cells",
+			"templates": "/chronograf/v1/dashboards/4/templates"
+		}
+	}
+}

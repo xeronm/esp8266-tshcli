@@ -9,7 +9,8 @@ class Message:
     ADD = 10
     REMOVE = 11
     RUN = 12
-
+    SOURCE = 13
+    LIST = 14
 
 class NS_Sched(dtlvmeta.namespace):
     _name = 'Scheduler'
@@ -63,4 +64,14 @@ class RunCount(dtlvmeta.uint16):
 class FailCount(dtlvmeta.uint16):
     _name = 'Fail-Count'
     _code = 109
+    _namespace = NS_Sched
+
+class Persistent(dtlvmeta.uint8):
+    _name = 'Persistent-Flag'
+    _code = 110
+    _namespace = NS_Sched
+
+class StatementSource(dtlvmeta.objectAVP):
+    _name = 'Statement-Source'
+    _code = 111
     _namespace = NS_Sched

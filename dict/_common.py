@@ -5,10 +5,6 @@ import dtlvmeta
 
 class Message:
     INFO       = 1
-    CONTROL    = 2
-    CONFIG_SET = 3
-    CONFIG_GET = 4
-    NETWORK    = 5
 
 class AppProduct(dtlvmeta.char):
     _name = 'Application-Product'
@@ -74,3 +70,18 @@ class PerepherialId(dtlvmeta.uint8):
     _name = 'Perepherial-GPIO-Id'
     _code = 16
 
+class UpdateTimestamp(dtlvmeta.date_time):
+    _name = 'Update-Timestamp'
+    _code = 17
+
+class ObjectSize(dtlvmeta.uint16):
+    _name = 'Object-Size'
+    _code = 18
+
+class MilticastSignal(dtlvmeta.uint8):
+    _name = 'Milticast-Signal'
+    _code = 19
+
+class SystemDescription(dtlvmeta.char):
+    _name = 'System-Description'
+    _code = 20
