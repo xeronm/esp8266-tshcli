@@ -1,6 +1,8 @@
 esp8266-tshcli
 ===============
-Client utilities for ESP8266 Light-weight Shell
+Client utilities for ESP8266 Light-weight Shell [esp8266-tsh]
+
+[esp8266-tsh]: https://github.com/xeronm/esp8266-tsh
 
 ### CLI utility ###
 
