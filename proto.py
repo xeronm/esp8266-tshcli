@@ -42,6 +42,7 @@ class Packet:
     CMD_CODE_AUTH = 1
     CMD_CODE_TERMINATE = 2
     CMD_CODE_SRVMSG = 3
+    CMD_CODE_NTFMSG = 4
 
     CMD_FLAG_REQUEST = 1 << 7
     CMD_FLAG_SECURED = 1 << 6
@@ -142,17 +143,21 @@ class UdpControlClient():
         self.s.sendto(data, (self.host, self.port))
 
     def recvPacket(self, rerror=True):
-        data, addr = self.s.recvfrom(PACKET_SIZE)
-        data = binascii.hexlify(data)
+        while True:
+            data, addr = self.s.recvfrom(PACKET_SIZE)
+            data = binascii.hexlify(data)
 
-        logging.debug('recv_data: %s', data)
-        packet = Packet(serviceId=0, flags=Packet.CMD_FLAG_SECURED, identifier=1, code=Packet.CMD_CODE_AUTH, data=data)
-        packet.decode(self.secret)
+            logging.debug('recv_data: %s', data)
+            packet = Packet(serviceId=0, flags=Packet.CMD_FLAG_SECURED, identifier=1, code=Packet.CMD_CODE_AUTH, data=data)
+            packet.decode(self.secret)
 
-        logging.debug('recv: id:%d, code:%d, service:%d, digest:%s', packet.identifier, packet.code, packet.serviceId, packet.digest)
-        json_data = packet.avplist.as_json_serializable()
-        logging.debug('recv_packet:\n%s', json.dumps(json_data, indent=4, separators=(',', ': ')) )
+            logging.debug('recv: id:%d, code:%d, service:%d, digest:%s', packet.identifier, packet.code, packet.serviceId, packet.digest)
+            json_data = packet.avplist.as_json_serializable()
+            logging.debug('recv_packet:\n%s', json.dumps(json_data, indent=4, separators=(',', ': ')) )
 
-        self.advAuth = packet.digest
-
-        return packet
+            if packet.code != Packet.CMD_CODE_NTFMSG:
+                self.advAuth = packet.digest
+                return packet
+            else:
+                logging.info('got notification: service:%d\n%s\n', packet.serviceId, json.dumps(packet.avplist.as_json_serializable(), indent=4, separators=(',', ': ')))
+        return None

@@ -85,3 +85,7 @@ class MilticastSignal(dtlvmeta.uint8):
 class SystemDescription(dtlvmeta.char):
     _name = 'System-Description'
     _code = 20
+
+class SystemUpTime(dtlvmeta.uint32):
+    _name = 'System-Uptime'
+    _code = 21

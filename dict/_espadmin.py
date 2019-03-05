@@ -12,7 +12,8 @@ class Message:
     FW_OTA_UPLOAD = 13
     FW_OTA_DONE   = 14
     FW_OTA_ABORT  = 15
-    FW_VERIFY     = 16
+    FW_OTA_VERIFY_DONE  = 16
+    FW_VERIFY     = 17
 
 class NS_EspAdmin(dtlvmeta.namespace):
     _name = 'ESP-Admin'
@@ -272,6 +273,11 @@ class WIFI_AutoConnect(dtlvmeta.uint8):
 class WIFI_ConnectStatus(dtlvmeta.uint8):
     _name = 'WiFi-Connect-Status'
     _code = 151
+    _namespace = NS_EspAdmin
+
+class WIFI_SoftAP_Timeout(dtlvmeta.uint16):
+    _name = 'WiFi-SoftAP-Timeout'
+    _code = 152
     _namespace = NS_EspAdmin
 
 class OTA_BinState(dtlvmeta.uint8):

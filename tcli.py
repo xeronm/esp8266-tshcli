@@ -28,6 +28,7 @@ from operator import itemgetter
 import logging 
 import os
 import time
+#logging.basicConfig(format='[%(asctime)s] %(levelname) 9s %(module)s: %(message)s', level=logging.INFO)
 logging.basicConfig(format='[%(asctime)s] %(levelname) 9s %(module)s: %(message)s', level=logging.WARNING)
 
 from proto import *
@@ -101,6 +102,10 @@ class Control:
 
     def cmd_lsh(self):
         """light-weight shell commands"""
+        pass
+
+    def cmd_ntp(self):
+        """NTP client commands"""
         pass
 
     def cmd_lsh_info(self):
@@ -368,12 +373,14 @@ Running Firmware:
             exit( ExitCodes.COMMAND_ERROR )
 
         firmware_file = os.path.join(os.path.split(self.args.firmware)[0], firmware_info['file_mame'])
+        firmware_addr = firmware_info['fw_addr']
+        firmware_version = firmware_info['version']
         print("""Uploading Firmware: %s
     Product: %s
     Version: %s
     Address: %s
     BinDate: %s
-""" % (firmware_file, firmware_info['product'], firmware_info['version'], firmware_info['fw_addr'], time.strftime(dtlvmeta.c_time_format, time.localtime(firmware_info['bin_date'])) ))
+""" % (firmware_file, firmware_info['product'], firmware_version, firmware_addr, time.strftime(dtlvmeta.c_time_format, time.localtime(firmware_info['bin_date'])) ))
 
         res = self.uc.srvmsg( {
             'esp:common.Service-Message': OrderedDict([
@@ -462,6 +469,22 @@ Result Firmware:
     Address: %s
     BinDate: %s
 """ % ( service_msg['common.Application-Product'], service_msg['common.Application-Version'], fw_address, service_msg['esp.Firmware'].get('esp.FW-Bin-Date')))
+        if firmware_addr == fw_address and firmware_version == service_msg['common.Application-Version']:
+            res = self.uc.srvmsg( {
+                'esp:common.Service-Message': OrderedDict([
+                    ('common.Service-Message-Type', espadmin.Message.FW_OTA_VERIFY_DONE),
+                ])
+            }, espadmin.namespace_id )
+            resdata = self.check_response(res, 'Command Error: Firmware upgrade verify done')
+            if not resdata:
+                exit( ExitCodes.COMMAND_ERROR )
+            ext_code = resdata["esp:common.Service-Message"]["common.Result-Ext-Code"]
+            if ext_code != 0:
+                print('Upgrade verify done failed: %d' % ext_code)
+                exit( ExitCodes.APPL_ERROR )
+        else:
+            print('Upgrade Failed!!!')
+            exit( ExitCodes.APPL_ERROR )
 
         return res
 

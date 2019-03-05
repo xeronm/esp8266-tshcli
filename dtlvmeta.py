@@ -23,6 +23,7 @@
 
 import inspect
 import logging
+import binascii
 import time
 import re
 from utility import *
@@ -80,6 +81,14 @@ class char(baseAVP):
 class octets(baseAVP):
     _datatype = datatype.TYPE_OCTETS
 
+    @classmethod
+    def as_json_serializable(cls, value):
+        return binascii.hexlify(value)
+
+    @classmethod
+    def from_json_serializable(cls, value):
+        return binascii.unhexlify(value)
+
 
 class objectAVP(baseAVP):
     _datatype = datatype.TYPE_OBJECT
@@ -119,11 +128,11 @@ class ipv4_address(octets):
 
     @classmethod
     def as_json_serializable(cls, value):
-        return hex_to_ipv4(value)
+        return hex_to_ipv4(binascii.hexlify(value))
 
     @classmethod
     def from_json_serializable(cls, value):
-        return ipv4_to_hex(value)
+        return binascii.unhexlify(ipv4_to_hex(value))
 
 class mac48_address(octets):
     _fixed_length = 6

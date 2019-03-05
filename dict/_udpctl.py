@@ -14,6 +14,11 @@ class ProtocolVersion(dtlvmeta.uint16):
     _code = 100
     _namespace = NS_UdpControl
 
+class NotificationAddr(dtlvmeta.objectAVP):
+    _name = 'Notification-Address'
+    _code = 101
+    _namespace = NS_UdpControl
+
 class IdleTimeout(dtlvmeta.uint16):
     _name = 'Idle-Timeout'
     _code = 102
@@ -63,5 +68,10 @@ class ClientFirstTime(dtlvmeta.date_time):
 class ClientLastTime(dtlvmeta.date_time):
     _name = 'Client-Last-Time'
     _code = 110
+    _namespace = NS_UdpControl
+
+class SurveillanceTimeout(dtlvmeta.uint8):
+    _name = 'Surveillance-Timeout'
+    _code = 111
     _namespace = NS_UdpControl
 
