@@ -66,7 +66,7 @@ def main():
         }, espadmin.namespace_id ))
 
     psysinfo = pinfo['esp:common.Service-Message']['esp.System']
-    output['esp.System-Uptime'] = psysinfo['esp.System-Uptime']
+    output['common.System-Uptime'] = pinfo['esp:common.Service-Message']['common.System-Uptime']
     output['esp.Heap-Free-Size'] = psysinfo['esp.Heap-Free-Size']
     output['common.Host-Name'] = pinfo['esp:common.Service-Message']['common.Host-Name']
 
