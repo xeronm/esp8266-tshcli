@@ -1,5 +1,3 @@
-#!/usr/bin/python
-# -*- coding: utf-8 -*-
 #
 # ESP8266 Things Shell UDP Control Protocol
 # Copyright (c) 2018 Denis Muratov <xeronm@gmail.com>.
@@ -27,13 +25,12 @@ import hmac
 import hashlib
 import socket
 import sys
-import dtlv
-from collections import OrderedDict
 import json
 import logging
 
-sys.path.append(os.path.join(os.path.split(__file__)[0], './dict'))
-from metadict import *
+from .dtlv import dtlv
+from .dtlv import utils
+from . import dict
 
 PACKET_SIZE = 8192
 DEFAULT_PORT = 3901
@@ -60,21 +57,21 @@ class Packet:
         self.digest = None
 
     def encode(self, secret, advauth=None):
-        comp = [ dtlv.word_to_hex(self.serviceId), '0'*4, # Service-Id, Length 
-                 dtlv.byte_to_hex(self.flags), dtlv.byte_to_hex(self.code), dtlv.word_to_hex(self.identifier), # Flags, Code, Identifier
+        comp = [ utils.word_to_hex(self.serviceId), '0'*4, # Service-Id, Length 
+                 utils.byte_to_hex(self.flags), utils.byte_to_hex(self.code), utils.word_to_hex(self.identifier), # Flags, Code, Identifier
                ]
         if self.isAuthRequest():
             comp.append('0'*64) # digest
             self.auth = binascii.b2a_hex(os.urandom(32)).decode()
             comp.append(self.auth) # Authenticator
         else:
-            comp.append(advauth)
+            comp.append(advauth.decode())
 
         if self.avplist:
             comp.append(self.avplist.encode())
 
         self.length = sum(map(lambda x: len(x), comp))/2
-        comp[1] = dtlv.word_to_hex(self.length)
+        comp[1] = utils.word_to_hex(self.length)
 
         data = binascii.unhexlify(''.join(comp))
         h = hmac.new(secret.encode(), data, hashlib.sha256)
@@ -99,7 +96,7 @@ class Packet:
             self.auth = self.data[80:144]
             hdrlen = 144
 
-        self.avplist = dtlv.AVPList(data=self.data[hdrlen:], context_ns_id=udpctl.namespace_id)
+        self.avplist = dtlv.AVPList(data=self.data[hdrlen:], context_ns_id=dict.udpctl.namespace_id)
         self.avplist.decode()
 
 class UdpControlClient():
@@ -116,7 +113,7 @@ class UdpControlClient():
 
     def auth(self):    
         self.packet_id = 1
-        packet = Packet(serviceId=udpctl.namespace_id, flags=Packet.CMD_FLAG_REQUEST | Packet.CMD_FLAG_SECURED, identifier=self.packet_id, code=Packet.CMD_CODE_AUTH)
+        packet = Packet(serviceId=dict.udpctl.namespace_id, flags=Packet.CMD_FLAG_REQUEST | Packet.CMD_FLAG_SECURED, identifier=self.packet_id, code=Packet.CMD_CODE_AUTH)
         self.sendPacket(packet)
         packet = self.recvPacket()
         return packet

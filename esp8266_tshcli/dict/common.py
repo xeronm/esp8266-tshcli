@@ -1,7 +1,4 @@
-#!/usr/bin/python
-# -*- coding: utf-8 -*-
-
-import dtlvmeta
+from ..dtlv import dtlvmeta
 
 class Message:
     INFO       = 1

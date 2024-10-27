@@ -5,7 +5,7 @@
 # Copyright (c) 2018 Denis Muratov <xeronm@gmail.com>.
 # https://dtec.pro/gitbucket/git/esp8266/esp8266-tsh.git
 #
-# This file is part of ESP8266 Things Shell Command Line Utility.
+# This file is part of ESP8266 Things Shell Command Line utils.
 #
 # ESP8266 Things Shell Command Line Utility is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -26,7 +26,8 @@ import logging
 import binascii
 import time
 import re
-from utility import *
+
+from . import utils
 
 c_time_format = '%Y.%m.%d %H:%M:%S'
 
@@ -77,13 +78,17 @@ class uint32(baseAVP):
 class char(baseAVP):
     _datatype = datatype.TYPE_CHAR
 
+    @classmethod
+    def as_json_serializable(cls, value):
+        return value.decode()    
+
 
 class octets(baseAVP):
     _datatype = datatype.TYPE_OCTETS
 
     @classmethod
     def as_json_serializable(cls, value):
-        return binascii.hexlify(value)
+        return binascii.hexlify(value).decode()
 
     @classmethod
     def from_json_serializable(cls, value):
@@ -128,22 +133,22 @@ class ipv4_address(octets):
 
     @classmethod
     def as_json_serializable(cls, value):
-        return hex_to_ipv4(binascii.hexlify(value))
+        return utils.hex_to_ipv4(binascii.hexlify(value))
 
     @classmethod
     def from_json_serializable(cls, value):
-        return binascii.unhexlify(ipv4_to_hex(value))
+        return binascii.unhexlify(utils.ipv4_to_hex(value))
 
 class mac48_address(octets):
     _fixed_length = 6
 
     @classmethod
     def as_json_serializable(cls, value):
-        return hex_to_mac48(value)
+        return utils.hex_to_mac48(value)
 
     @classmethod
     def from_json_serializable(cls, value):
-        return mac48_to_hex(value)
+        return utils.mac48_to_hex(value)
 
 class time_zone(uint8):
 

@@ -1,18 +1,15 @@
-#!/usr/bin/python
-# -*- coding: utf-8 -*-
+from ..dtlv import dtlvmeta
 
-import dtlvmeta
-
-import _common as common
-import _service as service
-import _udpctl as udpctl
-import _espadmin as espadmin
-import _ntp as ntp
-import _syslog as syslog
-import _gpioctl as gpioctl
-import _dht as dht
-import _sched as sched
-import _lsh as lsh
+from . import common
+from . import service
+from . import udpctl
+from . import espadmin
+from . import ntp
+from . import syslog
+from . import gpioctl
+from . import dht
+from . import sched
+from . import lsh
 
 dtlvmeta.avpIndex.addModule(common, "common")
 dtlvmeta.avpIndex.addModule(service, "service")

@@ -1,4 +1,4 @@
-#!/usr/bin/python
+#!/usr/bin/python3
 # -*- coding: utf-8 -*-
 #
 # ESP8266 Things Shell FAN Control Unit Example
@@ -22,12 +22,12 @@
 #
 
 import argparse
-import os
-import time
-from proto import *
-from dtlv import *
 import json
-import dtlvmeta
+import logging
+
+from esp8266_tshcli.proto import UdpControlClient
+from esp8266_tshcli import dtlv, dict
+
 
 DESCRIPTION = "esp8266 Things Shell: FAN Control Unit Measurements"
 FAN_PORT_ID = 0
@@ -37,6 +37,7 @@ def parseArgupments():
     parser.add_argument("-p", dest="port", type=int, help="target port", default=3901)
     parser.add_argument("-s", dest="secret", type=str, help="authentication secret", required=True)
     parser.add_argument("-H", dest="host", type=str, help="target host", required=True)
+    parser.add_argument("-v", dest="loglevel", type=int, help="target port", default=logging.WARNING)
 
     args = parser.parse_args()
     return args
@@ -47,23 +48,25 @@ def check_response(packet):
         return False
     res_data = packet.avplist.as_json_serializable()
     if res_data.get('common.Result-Code') != 1:
-        print('%s:\n%s' % (message, json.dumps(res_data, indent=4, separators=(',', ': '))) )
+        print('%s:\n%s' % (dtlv.message, json.dumps(res_data, indent=4, separators=(',', ': '))) )
         return False
     return res_data
 
 def main():
     output = {}
     args = parseArgupments()
+    logging.basicConfig(format='[%(asctime)s] %(levelname) 9s %(module)s: %(message)s', level=args.loglevel)
+
     uc = UdpControlClient(port=args.port, host=args.host, secret=args.secret)     
     if not check_response (uc.auth()):
         exit(-1)
 
     pinfo = check_response (uc.srvmsg( {
             'esp:common.Service-Message': {
-                'common.Service-Message-Type': common.Message.INFO,
+                'common.Service-Message-Type': dict.common.Message.INFO,
                 'esp.System': {}
             }
-        }, espadmin.namespace_id ))
+        }, dict.espadmin.namespace_id ))
 
     psysinfo = pinfo['esp:common.Service-Message']['esp.System']
     output['common.System-Uptime'] = pinfo['esp:common.Service-Message']['common.System-Uptime']
@@ -72,9 +75,9 @@ def main():
 
     pdht = check_response (uc.srvmsg( {
             'dht:common.Service-Message': {
-                'common.Service-Message-Type': common.Message.INFO
+                'common.Service-Message-Type': dict.common.Message.INFO
             }
-        }, dht.namespace_id ))
+        }, dict.dht.namespace_id ))
 
     pdhtlast = pdht['dht:common.Service-Message'].get('dht.Stat-Last')
     pdhtavg = pdht['dht:common.Service-Message'].get('dht.Stat-Average')
@@ -88,9 +91,9 @@ def main():
 
     pgpio = check_response (uc.srvmsg( {
             'gpio:common.Service-Message': {
-                'common.Service-Message-Type': common.Message.INFO
+                'common.Service-Message-Type': dict.common.Message.INFO
             }
-        }, gpioctl.namespace_id ))
+        }, dict.gpioctl.namespace_id ))
 
     for gpioinfo in pgpio['gpio:common.Service-Message']['gpio.GPIO-Port']:
         if gpioinfo['common.Perepherial-GPIO-Id'] == FAN_PORT_ID:
@@ -98,4 +101,6 @@ def main():
 
     print(json.dumps(output, sort_keys=True, indent=4, separators=(',', ': ')))
 
-main()
+
+if __name__ == "__main__":
+    main()

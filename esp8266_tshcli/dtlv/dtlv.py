@@ -1,11 +1,9 @@
-#!/usr/bin/python
-# -*- coding: utf-8 -*-
 #
 # ESP8266 Things Shell UDP Control Protocol
 # Copyright (c) 2018 Denis Muratov <xeronm@gmail.com>.
 # https://dtec.pro/gitbucket/git/esp8266/esp8266-tsh.git
 #
-# This file is part of ESP8266 Things Shell Command Line Utility.
+# This file is part of ESP8266 Things Shell Command Line utils.
 #
 # ESP8266 Things Shell Command Line Utility is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -22,10 +20,11 @@
 #
 
 from collections import OrderedDict
-import dtlvmeta
 import binascii
 import logging
-from utility import *
+
+from . import dtlvmeta
+from . import utils
 
 class AVP:
     TYPE_OCTETS = 0
@@ -99,9 +98,9 @@ class AVP:
         elif meta:
             value = meta.as_json_serializable(self.value)
         elif self.datatype == AVP.TYPE_OCTETS:
-            value = binascii.hexlify(self.value)
+            value = binascii.hexlify(self.value).decode()
         else:
-            value = self.value
+            value = self.value.decode()
 
         return value
 
@@ -135,26 +134,26 @@ class AVP:
             value_data = binascii.hexlify(self.value)
         elif self.datatype == AVP.TYPE_INTEGER:
             if self.fixed_length == 1:
-                value_data = byte_to_hex(self.value)
+                value_data = utils.byte_to_hex(self.value)
             elif self.fixed_length == 2:
-                value_data = word_to_hex(self.value)
+                value_data = utils.word_to_hex(self.value)
             elif self.fixed_length == 4:
-                value_data = int_to_hex(self.value)
+                value_data = utils.int_to_hex(self.value)
 
         code = (self.code & 0x03FF) | ((self.namespace_id << 10) & 0xFC00)
 
-        data = [ '0'*4, word_to_hex(code) ]
+        data = [ '0'*4, utils.word_to_hex(code) ]
         if isinstance(value_data, list):
             data += value_data
         else:
             data.append(value_data)
 
-        self.length = sum(map(lambda x: len(x), data))/2
+        self.length = sum(map(lambda x: len(x), data)) >> 1
 
         length = (self.length & 0x1FFF) | ((self.datatype << 14) & 0xC000)
         if self.islist:
             length |= 0x2000
-        data[0] = word_to_hex(length)    
+        data[0] = utils.word_to_hex(length)    
 
         allign_suffix = ((((self.length + 0b11) >> 2) << 2 ) - self.length)*2
         if allign_suffix:

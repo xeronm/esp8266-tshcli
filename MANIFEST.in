@@ -1,0 +1,7 @@
+include README.md
+include LICENSE.md
+include requirements.txt
+recursive-include esp8266_tshcli/ *
+recursive-include example/ *
+global-exclude __pycache__
+global-exclude *.py[co]

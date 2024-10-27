@@ -1,5 +1,4 @@
-#!/usr/bin/python
-# -*- coding: utf-8 -*-
+import re
 
 def block_offset(block, offset = '\t'):
     return re.sub('^(?m)', offset, block)
